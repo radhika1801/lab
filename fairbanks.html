@@ -201,8 +201,6 @@
             margin: 0 15px;
             opacity: 0.5;
         }
-
-
         
         /* Different sizing for landscape and portrait images */
         .image-container.landscape {
@@ -241,50 +239,6 @@
             opacity: 1;
         }
         
-        .side-info {
-            position: fixed;
-            left: 30px;
-            bottom: 30px;
-            font-size: 12px;
-            opacity: 0.7;
-            z-index: 100;
-        }
-        
-        .info-button {
-            position: fixed;
-            right: 300px;
-            top: 30px;
-            font-size: 14px;
-            opacity: 0.7;
-            z-index: 100;
-            cursor: none;
-        }
-        
-        .side-navigation {
-            position: fixed;
-            right: 30px;
-            top: 50%;
-            transform: translateY(-50%);
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            z-index: 50;
-        }
-        
-        .nav-dot {
-            width: 8px;
-            height: 8px;
-            background-color: rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            cursor: none;
-            transition: all 0.3s ease;
-        }
-        
-        .nav-dot.active {
-            background-color: rgba(255, 255, 255, 0.8);
-            transform: scale(1.2);
-        }
-        
         @media (max-width: 768px) {
             .image-container.landscape {
                 width: 75vw;
@@ -307,16 +261,7 @@
             .image-counter {
                 font-size: 40px;
             }
-        }    
-     
-        
-        .preloader.hidden {
-            opacity: 0;
-            visibility: hidden;
-        }
-        
-       
-        
+        }         
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
@@ -324,12 +269,6 @@
 </head>
 <body>
     <div class="cursor"></div>
-    
-    <div class="preloader">
-        <div class="loader"></div>
-    </div>
-    
-    <div class="progress-bar"></div>
     
     <header>
         <div class="logo"><a href="index.html">Radhika Malpani</a></div> 
@@ -363,103 +302,101 @@
         </div>
     </div>
     
-    <div class="side-navigation" id="side-nav"></div>
-    
     <div class="gallery-container">
         <section class="image-section" data-index="1">
             <div class="image-container landscape" id="image-1">
-                <img src="photos/fairbanks/fb1.JPG" alt="Winter Landscape">
+                <img src="photos/fairbanks/fb1.JPG" alt="fb1">
                 <canvas class="distortion-canvas"></canvas>
             </div>
         </section>
         
         <section class="image-section" data-index="2">
             <div class="image-container landscape" id="image-2">
-                <img src="photos/fairbanks/fb2.JPG" alt="Snow-Covered Trees">
+                <img src="photos/fairbanks/fb2.JPG" alt="fb2">
                 <canvas class="distortion-canvas"></canvas>
             </div>
         </section>
         
         <section class="image-section" data-index="3">
             <div class="image-container landscape" id="image-3">
-                <img src="photos/fairbanks/fb3.JPG" alt="Northern Horizon">
+                <img src="photos/fairbanks/fb3.JPG" alt="fb3">
                 <canvas class="distortion-canvas"></canvas>
             </div>
         </section>
         
         <section class="image-section" data-index="4">
             <div class="image-container landscape" id="image-4">
-                <img src="photos/fairbanks/fb4.JPG" alt="Quiet Solitude">
+                <img src="photos/fairbanks/fb4.JPG" alt="fb4">
                 <canvas class="distortion-canvas"></canvas>
             </div>
         </section>
         
         <section class="image-section" data-index="5">
             <div class="image-container landscape" id="image-5">
-                <img src="photos/fairbanks/fb5.JPG" alt="Frozen Wilderness">
+                <img src="photos/fairbanks/fb5.JPG" alt="fb5">
                 <canvas class="distortion-canvas"></canvas>
             </div>
         </section>
         
         <section class="image-section" data-index="6">
             <div class="image-container landscape" id="image-6">
-                <img src="photos/fairbanks/fb6.JPG" alt="Winter's Path">
+                <img src="photos/fairbanks/fb6.JPG" alt="fb6">
                 <canvas class="distortion-canvas"></canvas>
             </div>
         </section>
         
         <section class="image-section" data-index="7">
             <div class="image-container portrait" id="image-7">
-                <img src="photos/fairbanks/fb7.JPG" alt="Morning Frost">
+                <img src="photos/fairbanks/fb7.JPG" alt="fb7">
                 <canvas class="distortion-canvas"></canvas>
             </div>
         </section>
         
         <section class="image-section" data-index="8">
             <div class="image-container portrait" id="image-8">
-                <img src="photos/fairbanks/fb8.JPG" alt="White Expanse">
+                <img src="photos/fairbanks/fb8.JPG" alt="fb8">
                 <canvas class="distortion-canvas"></canvas>
             </div>
         </section>
         
         <section class="image-section" data-index="9">
             <div class="image-container portrait" id="image-9">
-                <img src="photos/fairbanks/fb9.JPG" alt="Frozen Moments">
+                <img src="photos/fairbanks/fb9.JPG" alt="fb9">
                 <canvas class="distortion-canvas"></canvas>
             </div>
         </section>
         
         <section class="image-section" data-index="10">
             <div class="image-container portrait" id="image-10">
-                <img src="photos/fairbanks/fb10.JPG" alt="Snow-Covered Vista">
+                <img src="photos/fairbanks/fb10.JPG" alt="fb10">
                 <canvas class="distortion-canvas"></canvas>
             </div>
         </section>
         
         <section class="image-section" data-index="11">
             <div class="image-container portrait" id="image-11">
-                <img src="photos/fairbanks/fb11.JPG" alt="Pristine Beauty">
+                <img src="photos/fairbanks/fb11.JPG" alt="fb11">
                 <canvas class="distortion-canvas"></canvas>
             </div>
         </section>
         
         <section class="image-section" data-index="12">
             <div class="image-container portrait" id="image-12">
-                <img src="photos/fairbanks/fb12.JPG" alt="Glacial Perspectives">
+                <img src="photos/fairbanks/fb12.JPG" alt="fb12">
                 <canvas class="distortion-canvas"></canvas>
             </div>
         </section>
         
         <section class="image-section" data-index="13">
             <div class="image-container portrait" id="image-13">
-                <img src="photos/fairbanks/fb13.JPG" alt="Winter's Edge">
+                <img src="photos/fairbanks/fb13.JPG" alt="fb13">
                 <canvas class="distortion-canvas"></canvas>
             </div>
         </section>
         
         <section class="image-section" data-index="14">
             <div class="image-container portrait" id="image-14">
-                <img src="photos/fairbanks/fb14.JPG" alt="Arctic Twilight">
+                <img src="photos/fairbanks/fb14.JPG" alt="fb14">
                 <canvas class="distortion-canvas"></canvas>
             </div>
         </section>
@@ -491,7 +428,8 @@
                 });
             });
             
-            // Liquid distortion effect on images
+            // Liquid distortion effect on images - I got the code from here: https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/getImageData
+
             imageContainers.forEach(container => {
                 const canvas = container.querySelector('.distortion-canvas');
                 const img = container.querySelector('img');
@@ -594,43 +532,13 @@
                     }
                 }
             }
-            
-            // Preloader
-            const preloader = document.querySelector('.preloader');
-            window.addEventListener('load', () => {
-                setTimeout(() => {
-                    preloader.classList.add('hidden');
-                }, 500);
-            });
-            
-            // Progress bar
-            const progressBar = document.querySelector('.progress-bar');
-            
-            window.addEventListener('scroll', () => {
-                const totalScroll = document.body.scrollHeight - window.innerHeight;
-                const progress = (window.pageYOffset / totalScroll) * 100;
-                progressBar.style.width = `${progress}%`;
-            });
+           
             
             // Counter element
             const counterElement = document.getElementById('current-number');
             const sections = document.querySelectorAll('.image-section');
             const sideNav = document.getElementById('side-nav');
             
-            // Create navigation dots
-            sections.forEach((section, index) => {
-                const dot = document.createElement('div');
-                dot.classList.add('nav-dot');
-                if (index === 0) dot.classList.add('active');
-                
-                dot.addEventListener('click', () => {
-                    section.scrollIntoView({ behavior: 'smooth' });
-                });
-                
-                sideNav.appendChild(dot);
-            });
-            
-            const navDots = document.querySelectorAll('.nav-dot');
             
             // Setup IntersectionObserver to track which section is in view
             const observer = new IntersectionObserver((entries) => {
@@ -638,15 +546,7 @@
                     if (entry.isIntersecting) {
                         const index = parseInt(entry.target.dataset.index);
                         updateCounter(index);
-                        
-                        // Update active nav dot
-                        navDots.forEach((dot, i) => {
-                            if (i === index - 1) {
-                                dot.classList.add('active');
-                            } else {
-                                dot.classList.remove('active');
-                            }
-                        });
+            
                     }
                 });
             }, { threshold: 0.5 }); // Trigger when section is 50% visible
@@ -696,7 +596,7 @@
                 );
             });
             
-            // Keyboard navigation
+            // Keyboard navigation, I got this code from AI
             document.addEventListener('keydown', (e) => {
                 // Find current active section index
                 let activeIndex = 0;
@@ -719,15 +619,10 @@
                 }
             });
             
-            // Info button interaction
-            const infoButton = document.querySelector('.info-button');
-            infoButton.addEventListener('click', () => {
-                alert('Fairbanks Winter Gallery\n\nPhotos taken in Fairbanks, Alaska during Winter 2025.\nUse arrow keys or navigation dots to navigate between images.\nHover over images to see the liquid distortion effect.');
-            });
             
             // Make clickable elements work with custom cursor
             const clickables = document.querySelectorAll('a, button, .nav-dot, .info-button');
-            
+        
             clickables.forEach(element => {
                 element.addEventListener('mouseenter', () => {
                     cursor.classList.add('image-hover');
