@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>RADHIKA MALPANI</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Didot&display=swap');
     
@@ -18,7 +19,7 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      cursor: none; /* Hide default cursor */
+      cursor: none;
     }
     
     #container {
@@ -28,297 +29,312 @@
       user-select: none;
       overflow: hidden;
       cursor: none;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
-    
-    /* Custom circular cursor */
-    .custom-cursor {
-      position: fixed;
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      background-color: #fef9e7;
+
+    .vertical-lines {
+      position: absolute;
+      top: -50%;
+      left: 0;
+      width: 100%;
+      height: 200%;
+      display: flex;
+      justify-content: space-between;
       pointer-events: none;
+      z-index: 1;
+      padding: 0 2vw;
+      mix-blend-mode: overlay;
+    }
+
+    .vertical-line {
+      width: 1px;
+      height: 200%;
+      background: linear-gradient(
+        180deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.05) 15%,
+        rgba(255, 255, 255, 0.15) 50%,
+        rgba(255, 255, 255, 0.05) 85%,
+        transparent 100%
+      );
+      transform-origin: center;
+      animation: lineFloat 8s infinite ease-in-out;
+      animation-delay: var(--delay);
+    }
+
+    @keyframes lineFloat {
+      0%, 100% { transform: scaleY(1) translateY(0); }
+      50% { transform: scaleY(0.85) translateY(5%); }
+    }
+
+    .line-dense { opacity: 0.2; }
+    .line-sparse { opacity: 0.1; }
+    
+    .custom-cursor {
+      width: 30px;
+      height: 30px;
+      background-color: white;
+      border-radius: 50%;
+      position: fixed;
+      pointer-events: none;
+      mix-blend-mode: difference;
       z-index: 9999;
-      transition: background-color 0.3s ease, transform 0.2s ease;
+      transition: width 0.3s, height 0.3s;
       transform: translate(-50%, -50%);
     }
     
     .custom-cursor.on-name {
-      background-color: #ff6b6b;
-      transform: translate(-50%, -50%) scale(1.5);
+      width: 60px;
+      height: 60px;
+    }
+    
+    .name-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      z-index: 2;
     }
     
     .letter {
-      position: absolute;
-      font-size: 3.5rem;
-      font-weight: 400;
-      color: #fef9e7;
-      filter: blur(3px);
-      transition: filter 0.5s ease, transform 0.5s ease;
+      font-size: 6rem;
+      font-weight: 800;
+      color: #ffffff;
+      transition: opacity 1.5s ease-in-out;
       line-height: 1;
       user-select: none;
-      will-change: transform, filter;
-      pointer-events: none;
-      white-space: nowrap;
-    }
-    
-    .sharp-letter {
-      font-size: 6rem !important;
-      font-weight: 800 !important;
-      color: #fef9e7 !important;
-      filter: none !important;
-      text-shadow:
-        0 0 10px #fef9e7,
-        0 0 20px #fef9e7,
-        0 0 30px #fef9e7,
-        0 0 40px #fef9e7;
-      animation: pop 2s infinite alternate;
-      z-index: 20;
       pointer-events: auto;
-      user-select: none;
       white-space: nowrap;
-      cursor: pointer;
+      opacity: 0;
+      will-change: transform;
+      mix-blend-mode: difference;
+      margin: 0 5px;
+      display: inline-block;
     }
     
-    @keyframes pop {
-      0% {
-        transform: scale(1);
-        text-shadow:
-          0 0 10px #fef9e7,
-          0 0 20px #fef9e7,
-          0 0 30px #fef9e7,
-          0 0 40px #fef9e7;
-      }
-      100% {
-        transform: scale(1.15);
-        text-shadow:
-          0 0 15px #fff,
-          0 0 30px #fff,
-          0 0 45px #fff,
-          0 0 60px #fff;
-      }
+    .letter.visible {
+      opacity: 1;
     }
-    
-    .nav {
-      display: none; /* Hide the fallback navigation */
+
+    .name-line {
+      display: flex;
+      justify-content: center;
+      width: 100%;
     }
   </style>
 </head>
 <body>
   <div class="custom-cursor" id="customCursor"></div>
-  <div id="container" aria-label="RADHIKA MALPANI"></div>
+  <div class="vertical-lines" id="verticalLines"></div>
+  
+  <div id="container" aria-label="RADHIKA MALPANI">
+    <div class="name-container">
+      <div class="name-line" id="line1"></div>
+      <div class="name-line" id="line2"></div>
+    </div>
+  </div>
 
   <script>
     const container = document.getElementById('container');
     const customCursor = document.getElementById('customCursor');
-    const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    const phrase = "RADHIKA MALPANI";
-    const phraseNoSpace = phrase.replace(/\s/g, '');
-    const totalLetters = 120; // total scattered letters including phrase letters
+    const verticalLines = document.getElementById('verticalLines');
+    const line1 = document.getElementById('line1');
+    const line2 = document.getElementById('line2');
+    const letters = [];
+    let mouseX = 0;
+    let mouseY = 0;
 
-    // Store letter elements and their target positions for phrase letters
-    const letterElements = [];
-
-    // Get viewport dimensions
     const vw = window.innerWidth;
     const vh = window.innerHeight;
 
+    // Create lines pattern
+    function createLines() {
+      verticalLines.innerHTML = '';
+      const numberOfLines = 100;
+      const baseSpacing = window.innerWidth / numberOfLines;
+
+      for (let i = 0; i < numberOfLines; i++) {
+        const line = document.createElement('div');
+        line.className = 'vertical-line';
+        
+        if (i % 3 === 0) {
+          line.classList.add('line-dense');
+        } else {
+          line.classList.add('line-sparse');
+        }
+
+        line.style.setProperty('--delay', `${Math.random() * -8}s`);
+        
+        const variation = baseSpacing * 0.2;
+        const xPos = (i * baseSpacing) + (Math.random() * variation - variation/2);
+        line.style.left = `${xPos}px`;
+        
+        verticalLines.appendChild(line);
+
+        gsap.to(line, {
+          scaleY: 0.7 + Math.random() * 0.6,
+          duration: 3 + Math.random() * 4,
+          yoyo: true,
+          repeat: -1,
+          ease: "sine.inOut",
+          delay: Math.random() * -3
+        });
+      }
+    }
+
+    createLines();
+
     // Custom cursor tracking
-    let mouseX = 0;
-    let mouseY = 0;
-    
-    // Track mouse movement
     document.addEventListener('mousemove', (e) => {
       mouseX = e.clientX;
       mouseY = e.clientY;
-      customCursor.style.left = mouseX + 'px';
-      customCursor.style.top = mouseY + 'px';
-    });
-
-    // Calculate target positions for phrase letters to form phrase centered horizontally and vertically
-    // We'll place phrase on two lines: "RADHIKA" and "MALPANI"
-    const phraseLines = ["RADHIKA", "MALPANI"];
-    const fontSizeSharp = 90; // px for sharp letters
-    const fontSizeBlur = 42; // px for blurred letters
-
-    // Calculate horizontal start positions for each line to center them with EQUAL spacing
-    function getLineStartX(line) {
-      // Use fixed equal spacing between all letters
-      const fixedSpacing = 100; // Fixed spacing in pixels between letter centers
-      const totalWidth = (line.length - 1) * fixedSpacing;
-      return (vw - totalWidth) / 2;
-    }
-    
-    const lineHeight = fontSizeSharp * 1.4;
-    const startY = (vh - (phraseLines.length * lineHeight)) / 2;
-
-    // Create a 2D array to track occupied areas for blurred letters to avoid overlap
-    const occupiedAreas = [];
-
-    // Helper to check if a rectangle overlaps any occupied area
-    function isOverlapping(x, y, w, h) {
-      for (const area of occupiedAreas) {
-        if (
-          x < area.x + area.w + 8 &&
-          x + w + 8 > area.x &&
-          y < area.y + area.h + 8 &&
-          y + h + 8 > area.y
-        ) {
-          return true;
-        }
-      }
-      return false;
-    }
-
-    // Create scattered letters (random letters) first
-    for (let i = 0; i < totalLetters; i++) {
-      const span = document.createElement('span');
-      span.classList.add('letter');
-      span.style.fontSize = fontSizeBlur + 'px';
-      span.textContent = letters.charAt(Math.floor(Math.random() * letters.length));
-
-      // Find a random position that does not overlap existing blurred letters
-      let x, y;
-      const w = fontSizeBlur * 0.65;
-      const h = fontSizeBlur * 1.1;
-      let attempts = 0;
-      do {
-        x = Math.random() * (vw - w);
-        y = Math.random() * (vh - h);
-        attempts++;
-        if (attempts > 300) break; // fallback to avoid infinite loop
-      } while (isOverlapping(x, y, w, h));
-
-      occupiedAreas.push({x, y, w, h});
-      span.style.left = x + 'px';
-      span.style.top = y + 'px';
-      container.appendChild(span);
-      letterElements.push({el: span, isPhrase: false});
-    }
-
-    // Replace some random letters with phrase letters scattered randomly
-    const phraseIndices = [];
-    while (phraseIndices.length < phraseNoSpace.length) {
-      const idx = Math.floor(Math.random() * totalLetters);
-      if (!phraseIndices.includes(idx)) phraseIndices.push(idx);
-    }
-
-    phraseNoSpace.split('').forEach((char, i) => {
-      const idx = phraseIndices[i];
-      const obj = letterElements[idx];
-      obj.el.textContent = char;
-      obj.isPhrase = true;
-      obj.el.style.fontSize = fontSizeSharp + 'px';
-      obj.el.classList.add('sharp-letter');
-      obj.el.style.filter = 'blur(0)';
-      obj.el.style.pointerEvents = 'auto';
       
-      // Add cursor color change events for name letters
-      obj.el.addEventListener('mouseenter', () => {
-        customCursor.classList.add('on-name');
-        obj.el.style.cursor = 'pointer';
-      });
-      
-      obj.el.addEventListener('mouseleave', () => {
-        customCursor.classList.remove('on-name');
+      gsap.to(customCursor, {
+        left: mouseX,
+        top: mouseY,
+        duration: 0.1,
+        ease: "power2.out"
       });
     });
 
-    // Calculate target positions for phrase letters with custom spacing for RADHIKA
-    const targets = [];
-    phraseLines.forEach((line, lineIndex) => {
-      const y = startY + lineIndex * lineHeight;
-      
-      if (line === "RADHIKA") {
-        const customSpacing = [0, 100, 100, 100, 100, 70, 100]; // Positions: R-A-D-H-I-K-A
-        let currentX = 0;
+    // Letter spacing configuration
+    const letterSpacings = {
+      'R': 85,
+      'A': 85,
+      'D': 95,
+      'H': 95,
+      'I': 55,
+      'K': 95,
+      'M': 95,
+      'L': 95,
+      'P': 95,
+      'N': 95
+    };
+
+    const fontSizeSharp = 90;
+
+    // Create and position letters
+    const createTextLine = (text, lineElement) => {
+      const chars = text.split('');
+
+      chars.forEach((char, index) => {
+        const span = document.createElement('span');
+        span.textContent = char;
+        span.classList.add('letter');
         
-        // Calculate total width with custom spacing to center the line
-        const totalWidth = customSpacing.reduce((sum, spacing, i) => {
-          return i === 0 ? 0 : sum + spacing;
-        }, 0);
-        const startX = (vw - totalWidth) / 2;
+        lineElement.appendChild(span);
         
-        for (let i = 0; i < line.length; i++) {
-          if (i === 0) {
-            currentX = startX;
-          } else {
-            currentX += customSpacing[i];
-          }
-          targets.push({ x: currentX, y });
-        }
-      } else {
-        // Regular equal spacing for MALPANI
-        const startX = getLineStartX(line);
-        const fixedSpacing = 100;
+        letters.push({
+          element: span,
+          x: 0, // Will be set after positioning
+          y: 0, // Will be set after positioning
+          initialX: 0,
+          initialY: 0
+        });
+
+        // Letter interactions
+        span.addEventListener('mouseenter', () => {
+          customCursor.classList.add('on-name');
+          gsap.to(span, {
+            scale: 1.2,
+            duration: 0.3,
+            ease: "power2.out"
+          });
+        });
         
-        for (let i = 0; i < line.length; i++) {
-          const x = startX + i * fixedSpacing;
-          targets.push({ x, y });
-        }
-      }
-    });
+        span.addEventListener('mouseleave', () => {
+          customCursor.classList.remove('on-name');
+          gsap.to(span, {
+            scale: 1,
+            duration: 0.3,
+            ease: "power2.out"
+          });
+        });
 
-    // Animate letters from scattered to phrase formation
-    function animateIn() {
-      phraseNoSpace.split('').forEach((char, i) => {
-        const obj = letterElements[phraseIndices[i]];
-        const target = targets[i];
-        obj.el.style.transition = 'all 1.5s ease-in-out';
-        obj.el.style.left = target.x + 'px';
-        obj.el.style.top = target.y + 'px';
-        obj.el.style.filter = 'none';
-        obj.el.style.fontSize = fontSizeSharp + 'px';
-        obj.el.classList.add('sharp-letter');
-      });
-    }
-
-    setTimeout(() => {
-      animateIn();
-    }, 1000);
-
-    // Subtle floating animation for phrase letters after they settle
-    phraseNoSpace.split('').forEach((char, i) => {
-      const obj = letterElements[phraseIndices[i]];
-      obj.el.animate([
-        { transform: 'translateY(0px)' },
-        { transform: 'translateY(-6px)' },
-        { transform: 'translateY(0px)' }
-      ], {
-        duration: 3000 + i * 150,
-        iterations: Infinity,
-        direction: 'alternate',
-        easing: 'ease-in-out',
-        delay: 2500
-      });
-    });
-
-    // Redirect on click of phrase letters
-    phraseNoSpace.split('').forEach((char, i) => {
-      const obj = letterElements[phraseIndices[i]];
-      
-      // Add click handler for redirection
-      obj.el.addEventListener('click', () => {
-        window.location.href = 'fairbanks.html';
-      });
-      
-      // Accessibility attributes
-      obj.el.setAttribute('role', 'link');
-      obj.el.setAttribute('tabindex', '0');
-      obj.el.setAttribute('aria-label', `Letter ${char} in RADHIKA MALPANI, click to go to Fairbanks College`);
-      
-      // Add keyboard navigation support
-      obj.el.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
+        span.addEventListener('click', () => {
           window.location.href = 'fairbanks.html';
+        });
+
+        gsap.to(span, {
+          opacity: 1,
+          duration: 1,
+          delay: index * 0.1,
+          ease: "power2.out"
+        });
+      });
+    };
+
+    // Create text lines
+    createTextLine("RADHIKA", line1);
+    createTextLine("MALPANI", line2);
+
+    // Calculate initial positions after letters are created
+    function calculatePositions() {
+      // Center the name container
+      const nameContainer = document.querySelector('.name-container');
+      const nameRect = nameContainer.getBoundingClientRect();
+      
+      // Update letter positions for magnetic effect
+      letters.forEach((letter, index) => {
+        const rect = letter.element.getBoundingClientRect();
+        letter.initialX = rect.left + rect.width / 2;
+        letter.initialY = rect.top + rect.height / 2;
+        letter.x = letter.initialX;
+        letter.y = letter.initialY;
+      });
+    }
+
+    // Wait for DOM to be fully rendered
+    setTimeout(calculatePositions, 100);
+
+    // Magnetic effect for letters
+    function animateLetters() {
+      letters.forEach(letter => {
+        const dx = mouseX - letter.x;
+        const dy = mouseY - letter.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        const maxDistance = 200;
+
+        if (distance < maxDistance) {
+          const force = (maxDistance - distance) / maxDistance;
+          const moveX = dx * force * 0.3;
+          const moveY = dy * force * 0.3;
+
+          gsap.to(letter.element, {
+            x: moveX,
+            y: moveY,
+            duration: 0.6,
+            ease: "power2.out"
+          });
+
+          letter.x = letter.initialX + moveX;
+          letter.y = letter.initialY + moveY;
+        } else {
+          gsap.to(letter.element, {
+            x: 0,
+            y: 0,
+            duration: 0.6,
+            ease: "power2.out"
+          });
+
+          letter.x = letter.initialX;
+          letter.y = letter.initialY;
         }
       });
+
+      requestAnimationFrame(animateLetters);
+    }
+
+    animateLetters();
+
+    // Handle window resize
+    window.addEventListener('resize', () => {
+      createLines();
+      calculatePositions();
     });
   </script>
-  
-  <div class="nav">
-    <a href="fairbanks.html">RADHIKA MALPANI</a>
-  </div>
 </body>
 </html>

@@ -64,10 +64,11 @@
             backdrop-filter: blur(5px);
         }
 
-        .logo {
-            font-size: 28px;
-            letter-spacing: 2px;
-        }
+        .logo a {
+    color: #fff;
+    text-decoration: none;
+}
+    
 
         nav ul {
             display: flex;
@@ -89,8 +90,8 @@
             opacity: 0.7;
         }
 
-           /* Corner Navigation and Main Content */
-           .corner-nav {
+        /* Corner Navigation */
+        .corner-nav {
             position: fixed;
             z-index: 50;
         }
@@ -101,7 +102,10 @@
             border: 2px solid white;
         }
 
-       
+        .top-left {
+            top: 24px;
+            left: 24px;
+        }
 
         .top-right {
             top: 24px;
@@ -126,10 +130,6 @@
         .top-right .corner-box {
             border-left: none;
             border-bottom: none;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            padding-top: 16px;
         }
 
         .bottom-left .corner-box {
@@ -142,6 +142,7 @@
             border-top: none;
         }
 
+        /* Main Content and Title Container */
         .main-content {
             min-height: 100vh;
             padding: 32px;
@@ -155,6 +156,9 @@
             margin: 64px 0 120px 0;
             position: relative;
             z-index: 2;
+            color: white;
+            max-width: 1200px;
+            padding: 0 20px;
         }
 
         .title-container h1 {
@@ -162,6 +166,37 @@
             font-weight: 300;
             letter-spacing: 0.1em;
             line-height: 1;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .subtitle {
+            font-size: 1.5rem;
+            letter-spacing: 0.2em;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+            text-transform: uppercase;
+        }
+
+        .description {
+            max-width: 800px;
+            margin: 0 auto 2rem;
+            padding: 0 20px;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            opacity: 0.8;
+        }
+
+        .location-info {
+            font-size: 0.9rem;
+            letter-spacing: 0.15em;
+            opacity: 0.7;
+            margin-top: 2rem;
+        }
+
+        .location-info .separator {
+            margin: 0 15px;
+            opacity: 0.5;
         }
 
         /* Image Gallery */
@@ -174,8 +209,6 @@
             gap: 16px;
             padding: 0 32px;
             transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-            will-change: gap, transform;
-            transform-origin: center top;
         }
 
         .image-container {
@@ -186,14 +219,11 @@
             opacity: 0;
             transform: translateY(50px);
             transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-            cursor: none;
-            transform-origin: center center;
-            will-change: transform;
         }
 
         .image-container.visible {
             opacity: 1;
-            transform: translateY(0) scale(1);
+            transform: translateY(0);
         }
 
         .image-container img {
@@ -220,56 +250,30 @@
             height: 100%;
             background-color: rgba(0, 0, 0, 0.9);
             z-index: 1000;
-            opacity: 0;
-            transition: opacity 0.3s ease;
         }
 
         .fullscreen-modal.active {
             display: flex;
             justify-content: center;
             align-items: center;
-            opacity: 1;
         }
 
         .fullscreen-image {
             max-width: 90%;
             max-height: 90vh;
             object-fit: contain;
-            transition: opacity 0.3s ease;
         }
 
-        .close-button {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            color: white;
-            font-size: 30px;
-            cursor: none;
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(0, 0, 0, 0.5);
-            border-radius: 50%;
-            transition: background-color 0.3s ease;
-        }
-
+        /* Navigation Buttons */
         .nav-button {
-            position: absolute;
+            position: fixed;
             top: 50%;
             transform: translateY(-50%);
-            color: white;
-            font-size: 30px;
-            cursor: none;
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
             background: rgba(0, 0, 0, 0.5);
-            border-radius: 50%;
-            transition: background-color 0.3s ease;
+            color: white;
+            padding: 20px;
+            cursor: pointer;
+            font-size: 24px;
             z-index: 1001;
         }
 
@@ -281,8 +285,15 @@
             right: 20px;
         }
 
-        .nav-button:hover {
-            background: rgba(255, 255, 255, 0.2);
+        .close-button {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            padding: 10px 20px;
+            cursor: pointer;
+            z-index: 1001;
         }
 
         /* Responsive Design */
@@ -294,13 +305,10 @@
 
         @media (max-width: 1200px) {
             .image-gallery {
-                grid-template-columns: repeat(5, 1fr);
-            }
-        }
-
-        @media (max-width: 992px) {
-            .image-gallery {
                 grid-template-columns: repeat(4, 1fr);
+            }
+            .title-container h1 {
+                font-size: 5rem;
             }
         }
 
@@ -311,11 +319,20 @@
             .title-container h1 {
                 font-size: 4rem;
             }
+            .subtitle {
+                font-size: 1.2rem;
+            }
+            .description {
+                font-size: 1rem;
+            }
         }
 
         @media (max-width: 480px) {
             .image-gallery {
                 grid-template-columns: repeat(2, 1fr);
+            }
+            .title-container h1 {
+                font-size: 3rem;
             }
         }
     </style>
@@ -324,22 +341,19 @@
     <div class="cursor"></div>
 
     <header>
-        <div class="logo">HONG KONG</div>
+        <div class="logo"><a href="index.html">Radhika Malpani</a></div>
         <nav>
             <ul>
                 <li><a href="fairbanks.html">FAIRBANKS</a></li>
                 <li><a href="jaipur.html">JAIPUR</a></li>
                 <li><a href="hk.html">HONG KONG</a></li>
-                <li><a href="#" class="menu-icon">•</a></li>
             </ul>
         </nav>
     </header>
 
     <div class="min-h-screen">
         <!-- Corner Navigation Elements -->
-        <div class="corner-nav top-left">
-            <div class="corner-box"></div>
-        </div>
+        
         
         <div class="corner-nav bottom-left">
             <div class="corner-box"></div>
@@ -352,63 +366,60 @@
         <!-- Main Content -->
         <div class="main-content">
             <div class="title-container">
+                <h1>HONG KONG</h1>
+                <div class="subtitle">LIFE IN MOTION</div>
+                <div class="description">
+                    <p>From morning markets to neon-lit streets, these photographs capture Hong Kong's authentic rhythm - the quiet moments between the chaos, intimate street scenes, and the people who give this vertical city its soul.</p>
+                </div>
+                <div class="location-info">
+                    <span class="coordinates">22.3193° N, 114.1694° E</span>
+                    <span class="separator">|</span>
+                    <span class="population">7.5M SOULS</span>
+                </div>
             </div>
 
             <div class="image-gallery" id="imageGallery">
                 <div class="image-container">
-                    <img src="photos/hk/hk1.jpeg" alt="hk1">
+                    <img src="photos/hk/hk1.jpeg" alt="Hong Kong - Urban canyon view of skyscrapers at night">
                 </div>
-                
                 <div class="image-container">
-                    <img src="photos/hk/hk2.jpeg" alt="hk2">
+                    <img src="photos/hk/hk2.jpeg" alt="Traditional street market in Hong Kong">
                 </div>
-
                 <div class="image-container">
-                    <img src="photos/hk/hk3.jpeg" alt="hk3">
+                    <img src="photos/hk/hk3.jpeg" alt="Victoria Harbor skyline at sunset">
                 </div>
-
                 <div class="image-container">
-                    <img src="photos/hk/hk4.jpeg" alt="hk4">
+                    <img src="photos/hk/hk4.jpeg" alt="Neon-lit streets of Mong Kok">
                 </div>
-
                 <div class="image-container">
-                    <img src="photos/hk/hk5.jpeg" alt="hk5">
+                    <img src="photos/hk/hk5.jpeg" alt="Traditional Chinese temple amid modern buildings">
                 </div>
-
                 <div class="image-container">
-                    <img src="photos/hk/hk6.jpeg" alt="hk6">
+                    <img src="photos/hk/hk6.jpeg" alt="Star Ferry crossing Victoria Harbor">
                 </div>
-
                 <div class="image-container">
-                    <img src="photos/hk/hk7.jpeg" alt="hk7">
+                    <img src="photos/hk/hk7.jpeg" alt="Street food stalls in night market">
                 </div>
-
                 <div class="image-container">
-                    <img src="photos/hk/hk8.jpeg" alt="hk8">
+                    <img src="photos/hk/hk8.jpeg" alt="High-rise residential buildings">
                 </div>
-
                 <div class="image-container">
-                    <img src="photos/hk/hk9.jpeg" alt="hk9">
+                    <img src="photos/hk/hk9.jpeg" alt="Tram running through urban canyon">
                 </div>
-
                 <div class="image-container">
-                    <img src="photos/hk/hk10.jpeg" alt="hk10">
+                    <img src="photos/hk/hk10.jpeg" alt="Peak view of Hong Kong skyline">
                 </div>
-
                 <div class="image-container">
-                    <img src="photos/hk/hk11.jpeg" alt="hk11">
+                    <img src="photos/hk/hk11.jpeg" alt="Traditional dim sum restaurant">
                 </div>
-
                 <div class="image-container">
-                    <img src="photos/hk/hk12.jpeg" alt="hk12">
+                    <img src="photos/hk/hk12.jpeg" alt="Urban architecture patterns">
                 </div>
-
                 <div class="image-container">
-                    <img src="photos/hk/hk13.jpeg" alt="hk13">
+                    <img src="photos/hk/hk13.jpeg" alt="Night market street scene">
                 </div>
-
                 <div class="image-container">
-                    <img src="photos/hk/hk14.jpeg" alt="hk14">
+                    <img src="photos/hk/hk14.jpeg" alt="Modern shopping district">
                 </div>
             </div>
         </div>
@@ -463,40 +474,15 @@
             }, index * 100);
         });
 
-        // Simple scroll effect with smooth squish
-        function updateGallerySpacing() {
-            const scrollPosition = window.pageYOffset;
-            const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-            const scrollPercent = Math.min(scrollPosition / maxScroll, 1);
-
-            const minGap = 0;
-            const maxGap = 16;
-            const gap = maxGap * (1 - scrollPercent);
-            const scale = 1 - (scrollPercent * 0.15);
-
-            gallery.style.gap = `${gap}px`;
-            gallery.style.transform = `scale(${1 - scrollPercent * 0.05})`;
-            
-            images.forEach(container => {
-                container.style.transform = `scale(${scale})`;
-                container.style.transformOrigin = 'center center';
-            });
-        }
-
         // Fullscreen functionality
         let currentImageIndex = 0;
         const totalImages = images.length;
 
         function showImage(index) {
             currentImageIndex = (index + totalImages) % totalImages;
-            modalImg.style.opacity = '0';
-            
-            setTimeout(() => {
-                const img = images[currentImageIndex].querySelector('img');
-                modalImg.src = img.src;
-                modalImg.alt = img.alt;
-                modalImg.style.opacity = '1';
-            }, 300);
+            const img = images[currentImageIndex].querySelector('img');
+            modalImg.src = img.src;
+            modalImg.alt = img.alt;
         }
 
         function nextImage() {
@@ -544,35 +530,17 @@
             }
         });
 
-        // Smooth scroll behavior
-        let ticking = false;
-        let smoothScrollTimeout;
-        
+        // Simple scroll effect
         window.addEventListener('scroll', () => {
-            if (!ticking) {
-                window.requestAnimationFrame(() => {
-                    updateGallerySpacing();
-                    ticking = false;
-                });
-                ticking = true;
-            }
-
-            gallery.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+            const scrollPosition = window.pageYOffset;
+            const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+            const scrollPercent = Math.min(scrollPosition / maxScroll, 1);
+            
             images.forEach(container => {
-                container.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+                const scale = 1 - (scrollPercent * 0.15);
+                container.style.transform = `scale(${scale})`;
             });
-
-            clearTimeout(smoothScrollTimeout);
-            smoothScrollTimeout = setTimeout(() => {
-                gallery.style.transition = 'none';
-                images.forEach(container => {
-                    container.style.transition = 'none';
-                });
-            }, 50);
         });
-
-        // Initial setup
-        updateGallerySpacing();
     </script>
 </body>
 </html>

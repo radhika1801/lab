@@ -21,13 +21,14 @@
         }
 
         body {
-            background-color: #000;
-            color: #fff;
+            background-color: #000000;
+            color: #ffffff;
             overflow-x: hidden;
             padding: 0;
             min-height: 100vh;
             position: relative;
         }
+
 
         /* Custom cursor */
         .cursor {
@@ -42,6 +43,68 @@
             z-index: 9999;
         }
 
+         /* Main Content and Title Container */
+         .main-content {
+            min-height: 100vh;
+            padding: 32px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .logo a {
+    color: #fff;
+    text-decoration: none;
+}
+        .title-container {
+            text-align: center;
+            margin: 64px 0 120px 0;
+            position: relative;
+            z-index: 2;
+            color: white;
+            max-width: 1200px;
+            padding: 0 20px;
+        }
+
+        .title-container h1 {
+            font-size: 6rem;
+            font-weight: 300;
+            letter-spacing: 0.1em;
+            line-height: 1;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .subtitle {
+            font-size: 1.5rem;
+            letter-spacing: 0.2em;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+            text-transform: uppercase;
+        }
+
+        .description {
+            max-width: 800px;
+            margin: 0 auto 2rem;
+            padding: 0 20px;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            opacity: 0.8;
+        }
+
+        .location-info {
+            font-size: 0.9rem;
+            letter-spacing: 0.15em;
+            opacity: 0.7;
+            margin-top: 2rem;
+        }
+
+        .location-info .separator {
+            margin: 0 15px;
+            opacity: 0.5;
+        }
+
+
+
         /* Header styles */
         header {
             display: flex;
@@ -55,15 +118,6 @@
             z-index: 100;
             background-color: rgba(0, 0, 0, 0.7);
             backdrop-filter: blur(5px);
-        }
-
-        .logo {
-            font-size: 28px;
-            letter-spacing: 2px;
-        }
-
-        .year {
-            font-size: 16px;
         }
 
         nav ul {
@@ -341,14 +395,28 @@
         <img src="" alt="Preview" class="preview-image">
     </div>
 
+    <div class="main-content">
+        <div class="title-container">
+            <h1>JAIPUR, RAJASTHAN</h1>
+            <div class="subtitle">ROYAL SANDS</div>
+            <div class="description">
+                <p>The Pink City through golden light. Ancient palaces, bustling bazaars, and timeless traditions blend in these frames - capturing Rajasthan's royal heritage and the vibrant spirit of India's desert jewel.RetryR</p>
+            </div>
+            <div class="location-info">
+                <span class="coordinates">26.9124° N, 75.7873° E</span>
+                <span class="separator">|</span>
+                <span class="population">4.4M SOULS</span>
+            </div>
+        </div>
+
+
     <header>
-        <div class="logo">JAIPUR, RAJASTHAN</div>
+        <div class="logo"><a href="index.html">Radhika Malpani</a></div> 
         <nav>
             <ul>
                 <li><a href="fairbanks.html">FAIRBANKS</a></li>
                 <li><a href="jaipur.html">JAIPUR</a></li>
                 <li><a href="hk.html">HONG KONG</a></li>
-                <li><a href="#" class="menu-icon">•</a></li>
             </ul>
         </nav>
     </header>

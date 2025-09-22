@@ -1,0 +1,57 @@
+ /* Main Content and Title Container */
+ .main-content {
+    min-height: 100vh;
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.title-container {
+    text-align: center;
+    margin: 64px 0 120px 0;
+    position: relative;
+    z-index: 2;
+    color: white;
+    max-width: 1200px;
+    padding: 0 20px;
+}
+
+.title-container h1 {
+    font-size: 6rem;
+    font-weight: 300;
+    letter-spacing: 0.1em;
+    line-height: 1;
+    margin-bottom: 1rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.subtitle {
+    font-size: 1.5rem;
+    letter-spacing: 0.2em;
+    margin-bottom: 2rem;
+    opacity: 0.9;
+    text-transform: uppercase;
+}
+
+.description {
+    max-width: 800px;
+    margin: 0 auto 2rem;
+    padding: 0 20px;
+    font-size: 1.1rem;
+    line-height: 1.6;
+    opacity: 0.8;
+}
+
+.location-info {
+    font-size: 0.9rem;
+    letter-spacing: 0.15em;
+    opacity: 0.7;
+    margin-top: 2rem;
+}
+
+.location-info .separator {
+    margin: 0 15px;
+    opacity: 0.5;
+}
+
