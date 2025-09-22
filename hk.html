@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hong Kong</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bellefair&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Bellefair", serif;
+            font-weight: 400;
+            font-style: normal;
+            user-select: none;
+            cursor: none;
+        }
+
+        body {
+            font-family: serif;
+            background-color: black;
+            color: white;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Custom cursor */
+        .cursor {
+            position: fixed;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.74);
+            transform: translate(-50%, -50%);
+            mix-blend-mode: difference;
+            pointer-events: none;
+            transition: width 0.2s, height 0.2s, background-color 0.2s;
+            z-index: 9999;
+        }
+
+        .cursor.image-hover {
+            width: 60px;
+            height: 60px;
+            background-color: rgba(146, 140, 231, 0.8);
+        }
+
+        /* Header styles */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 30px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            background-color: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+        }
+
+        .logo {
+            font-size: 28px;
+            letter-spacing: 2px;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+
+        nav li {
+            margin-left: 30px;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: #fff;
+            font-size: 14px;
+            transition: opacity 0.3s;
+        }
+
+        nav a:hover {
+            opacity: 0.7;
+        }
+
+           /* Corner Navigation and Main Content */
+           .corner-nav {
+            position: fixed;
+            z-index: 50;
+        }
+
+        .corner-box {
+            width: 64px;
+            height: 64px;
+            border: 2px solid white;
+        }
+
+       
+
+        .top-right {
+            top: 24px;
+            right: 24px;
+        }
+
+        .bottom-left {
+            bottom: 24px;
+            left: 24px;
+        }
+
+        .bottom-right {
+            bottom: 24px;
+            right: 24px;
+        }
+
+        .top-left .corner-box {
+            border-right: none;
+            border-bottom: none;
+        }
+
+        .top-right .corner-box {
+            border-left: none;
+            border-bottom: none;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding-top: 16px;
+        }
+
+        .bottom-left .corner-box {
+            border-right: none;
+            border-top: none;
+        }
+
+        .bottom-right .corner-box {
+            border-left: none;
+            border-top: none;
+        }
+
+        .main-content {
+            min-height: 100vh;
+            padding: 32px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .title-container {
+            text-align: center;
+            margin: 64px 0 120px 0;
+            position: relative;
+            z-index: 2;
+        }
+
+        .title-container h1 {
+            font-size: 6rem;
+            font-weight: 300;
+            letter-spacing: 0.1em;
+            line-height: 1;
+        }
+
+        /* Image Gallery */
+        .image-gallery {
+            width: 100%;
+            max-width: 2000px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 16px;
+            padding: 0 32px;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            will-change: gap, transform;
+            transform-origin: center top;
+        }
+
+        .image-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 100%;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: none;
+            transform-origin: center center;
+            will-change: transform;
+        }
+
+        .image-container.visible {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        .image-container img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .image-container:hover img {
+            transform: scale(1.05);
+        }
+
+        /* Fullscreen Modal */
+        .fullscreen-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .fullscreen-modal.active {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 1;
+        }
+
+        .fullscreen-image {
+            max-width: 90%;
+            max-height: 90vh;
+            object-fit: contain;
+            transition: opacity 0.3s ease;
+        }
+
+        .close-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            color: white;
+            font-size: 30px;
+            cursor: none;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 50%;
+            transition: background-color 0.3s ease;
+        }
+
+        .nav-button {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            color: white;
+            font-size: 30px;
+            cursor: none;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 50%;
+            transition: background-color 0.3s ease;
+            z-index: 1001;
+        }
+
+        .prev-button {
+            left: 20px;
+        }
+
+        .next-button {
+            right: 20px;
+        }
+
+        .nav-button:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1600px) {
+            .image-gallery {
+                grid-template-columns: repeat(6, 1fr);
+            }
+        }
+
+        @media (max-width: 1200px) {
+            .image-gallery {
+                grid-template-columns: repeat(5, 1fr);
+            }
+        }
+
+        @media (max-width: 992px) {
+            .image-gallery {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .image-gallery {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            .title-container h1 {
+                font-size: 4rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .image-gallery {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="cursor"></div>
+
+    <header>
+        <div class="logo">HONG KONG</div>
+        <nav>
+            <ul>
+                <li><a href="fairbanks.html">FAIRBANKS</a></li>
+                <li><a href="jaipur.html">JAIPUR</a></li>
+                <li><a href="hk.html">HONG KONG</a></li>
+                <li><a href="#" class="menu-icon">•</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="min-h-screen">
+        <!-- Corner Navigation Elements -->
+        <div class="corner-nav top-left">
+            <div class="corner-box"></div>
+        </div>
+        
+        <div class="corner-nav bottom-left">
+            <div class="corner-box"></div>
+        </div>
+
+        <div class="corner-nav bottom-right">
+            <div class="corner-box"></div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="title-container">
+            </div>
+
+            <div class="image-gallery" id="imageGallery">
+                <div class="image-container">
+                    <img src="photos/hk/hk1.jpeg" alt="hk1">
+                </div>
+                
+                <div class="image-container">
+                    <img src="photos/hk/hk2.jpeg" alt="hk2">
+                </div>
+
+                <div class="image-container">
+                    <img src="photos/hk/hk3.jpeg" alt="hk3">
+                </div>
+
+                <div class="image-container">
+                    <img src="photos/hk/hk4.jpeg" alt="hk4">
+                </div>
+
+                <div class="image-container">
+                    <img src="photos/hk/hk5.jpeg" alt="hk5">
+                </div>
+
+                <div class="image-container">
+                    <img src="photos/hk/hk6.jpeg" alt="hk6">
+                </div>
+
+                <div class="image-container">
+                    <img src="photos/hk/hk7.jpeg" alt="hk7">
+                </div>
+
+                <div class="image-container">
+                    <img src="photos/hk/hk8.jpeg" alt="hk8">
+                </div>
+
+                <div class="image-container">
+                    <img src="photos/hk/hk9.jpeg" alt="hk9">
+                </div>
+
+                <div class="image-container">
+                    <img src="photos/hk/hk10.jpeg" alt="hk10">
+                </div>
+
+                <div class="image-container">
+                    <img src="photos/hk/hk11.jpeg" alt="hk11">
+                </div>
+
+                <div class="image-container">
+                    <img src="photos/hk/hk12.jpeg" alt="hk12">
+                </div>
+
+                <div class="image-container">
+                    <img src="photos/hk/hk13.jpeg" alt="hk13">
+                </div>
+
+                <div class="image-container">
+                    <img src="photos/hk/hk14.jpeg" alt="hk14">
+                </div>
+            </div>
+        </div>
+
+        <!-- Fullscreen Modal -->
+        <div class="fullscreen-modal" id="fullscreenModal">
+            <div class="close-button" id="closeButton">×</div>
+            <div class="nav-button prev-button" id="prevButton">‹</div>
+            <div class="nav-button next-button" id="nextButton">›</div>
+            <img class="fullscreen-image" id="fullscreenImage" src="" alt="">
+        </div>
+    </div>
+
+    <script>
+        // Custom cursor
+        const cursor = document.querySelector('.cursor');
+        
+        document.addEventListener('mousemove', (e) => {
+            gsap.to(cursor, {
+                x: e.clientX,
+                y: e.clientY,
+                duration: 0.1
+            });
+        });
+
+        // Change cursor on interactive elements
+        const interactiveElements = document.querySelectorAll('a, .image-container, .close-button, .nav-button');
+        
+        interactiveElements.forEach(element => {
+            element.addEventListener('mouseenter', () => {
+                cursor.classList.add('image-hover');
+            });
+            
+            element.addEventListener('mouseleave', () => {
+                cursor.classList.remove('image-hover');
+            });
+        });
+
+        // Initialize elements
+        const gallery = document.querySelector('.image-gallery');
+        const images = document.querySelectorAll('.image-container');
+        const modal = document.getElementById('fullscreenModal');
+        const modalImg = document.getElementById('fullscreenImage');
+        const closeButton = document.getElementById('closeButton');
+        const prevButton = document.getElementById('prevButton');
+        const nextButton = document.getElementById('nextButton');
+
+        // Add visible class with delay
+        images.forEach((container, index) => {
+            setTimeout(() => {
+                container.classList.add('visible');
+            }, index * 100);
+        });
+
+        // Simple scroll effect with smooth squish
+        function updateGallerySpacing() {
+            const scrollPosition = window.pageYOffset;
+            const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+            const scrollPercent = Math.min(scrollPosition / maxScroll, 1);
+
+            const minGap = 0;
+            const maxGap = 16;
+            const gap = maxGap * (1 - scrollPercent);
+            const scale = 1 - (scrollPercent * 0.15);
+
+            gallery.style.gap = `${gap}px`;
+            gallery.style.transform = `scale(${1 - scrollPercent * 0.05})`;
+            
+            images.forEach(container => {
+                container.style.transform = `scale(${scale})`;
+                container.style.transformOrigin = 'center center';
+            });
+        }
+
+        // Fullscreen functionality
+        let currentImageIndex = 0;
+        const totalImages = images.length;
+
+        function showImage(index) {
+            currentImageIndex = (index + totalImages) % totalImages;
+            modalImg.style.opacity = '0';
+            
+            setTimeout(() => {
+                const img = images[currentImageIndex].querySelector('img');
+                modalImg.src = img.src;
+                modalImg.alt = img.alt;
+                modalImg.style.opacity = '1';
+            }, 300);
+        }
+
+        function nextImage() {
+            showImage(currentImageIndex + 1);
+        }
+
+        function previousImage() {
+            showImage(currentImageIndex - 1);
+        }
+
+        images.forEach((container, index) => {
+            container.addEventListener('click', function() {
+                currentImageIndex = index;
+                modal.classList.add('active');
+                showImage(currentImageIndex);
+                document.body.style.overflow = 'hidden';
+            });
+        });
+
+        // Navigation
+        prevButton.addEventListener('click', previousImage);
+        nextButton.addEventListener('click', nextImage);
+
+        document.addEventListener('keydown', function(e) {
+            if (modal.classList.contains('active')) {
+                if (e.key === 'ArrowRight') {
+                    nextImage();
+                } else if (e.key === 'ArrowLeft') {
+                    previousImage();
+                } else if (e.key === 'Escape') {
+                    closeModal();
+                }
+            }
+        });
+
+        function closeModal() {
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        closeButton.addEventListener('click', closeModal);
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                closeModal();
+            }
+        });
+
+        // Smooth scroll behavior
+        let ticking = false;
+        let smoothScrollTimeout;
+        
+        window.addEventListener('scroll', () => {
+            if (!ticking) {
+                window.requestAnimationFrame(() => {
+                    updateGallerySpacing();
+                    ticking = false;
+                });
+                ticking = true;
+            }
+
+            gallery.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+            images.forEach(container => {
+                container.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+            });
+
+            clearTimeout(smoothScrollTimeout);
+            smoothScrollTimeout = setTimeout(() => {
+                gallery.style.transition = 'none';
+                images.forEach(container => {
+                    container.style.transition = 'none';
+                });
+            }, 50);
+        });
+
+        // Initial setup
+        updateGallerySpacing();
+    </script>
+</body>
+</html>
