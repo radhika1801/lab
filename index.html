@@ -1,37 +1,324 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="style.css">
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@200..800&family=Cormorant+Garamond:ital,wght@0,300..700;1,300..700&family=Exo:ital,wght@0,100..900;1,100..900&family=Old+Standard+TT:ital,wght@0,400;0,700;1,400&family=Oswald:wght@200..700&family=Story+Script&family=Tektur:wght@400..900&family=Tomorrow:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" 
-    rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>RADHIKA MALPANI</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Didot&display=swap');
+    
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: 'Didot', serif;
+      background-color: black;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: none; /* Hide default cursor */
+    }
+    
+    #container {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      user-select: none;
+      overflow: hidden;
+      cursor: none;
+    }
+    
+    /* Custom circular cursor */
+    .custom-cursor {
+      position: fixed;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background-color: #fef9e7;
+      pointer-events: none;
+      z-index: 9999;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      transform: translate(-50%, -50%);
+    }
+    
+    .custom-cursor.on-name {
+      background-color: #ff6b6b;
+      transform: translate(-50%, -50%) scale(1.5);
+    }
+    
+    .letter {
+      position: absolute;
+      font-size: 3.5rem;
+      font-weight: 400;
+      color: #fef9e7;
+      filter: blur(3px);
+      transition: filter 0.5s ease, transform 0.5s ease;
+      line-height: 1;
+      user-select: none;
+      will-change: transform, filter;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+    
+    .sharp-letter {
+      font-size: 6rem !important;
+      font-weight: 800 !important;
+      color: #fef9e7 !important;
+      filter: none !important;
+      text-shadow:
+        0 0 10px #fef9e7,
+        0 0 20px #fef9e7,
+        0 0 30px #fef9e7,
+        0 0 40px #fef9e7;
+      animation: pop 2s infinite alternate;
+      z-index: 20;
+      pointer-events: auto;
+      user-select: none;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+    
+    @keyframes pop {
+      0% {
+        transform: scale(1);
+        text-shadow:
+          0 0 10px #fef9e7,
+          0 0 20px #fef9e7,
+          0 0 30px #fef9e7,
+          0 0 40px #fef9e7;
+      }
+      100% {
+        transform: scale(1.15);
+        text-shadow:
+          0 0 15px #fff,
+          0 0 30px #fff,
+          0 0 45px #fff,
+          0 0 60px #fff;
+      }
+    }
+    
+    .nav {
+      display: none; /* Hide the fallback navigation */
+    }
+  </style>
 </head>
 <body>
-    <main>
-        <h1>fairbanks</h1>
-        <div class="collage">
-          <div class="column">
-            <img src="photos/fairbanks/fb1.JPG" alt="Cat sitting in front of a computer" />
-            <img src="photos/fairbanks/fb2.JPG" alt="cat sitting on a puzzle" />
-          </div>
-          <div class="column">
-            <img src="photos/fairbanks/fb3.JPG" alt="cat in a bag" />
-            <img src="photos/fairbanks/fb4.JPG" alt="cat wearing a hat" />
-          </div>
-          <div class="column">
-            <img src="photos/fairbanks/fb5.JPG" alt="cat in a backpack" />
-            <img src="photos/fairbanks/fb6.JPG" alt="cat dressed as kirby" />
-          </div>
-          <div class="column">
-            <img src="photos/fairbanks/fb7.JPG" alt="cat in a backpack" />
-            <img src="photos/fairbanks/fb8.JPG" alt="cat dressed as kirby" />
-          </div>
-        </div>
-      </main>
+  <div class="custom-cursor" id="customCursor"></div>
+  <div id="container" aria-label="RADHIKA MALPANI"></div>
+
+  <script>
+    const container = document.getElementById('container');
+    const customCursor = document.getElementById('customCursor');
+    const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    const phrase = "RADHIKA MALPANI";
+    const phraseNoSpace = phrase.replace(/\s/g, '');
+    const totalLetters = 120; // total scattered letters including phrase letters
+
+    // Store letter elements and their target positions for phrase letters
+    const letterElements = [];
+
+    // Get viewport dimensions
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+
+    // Custom cursor tracking
+    let mouseX = 0;
+    let mouseY = 0;
+    
+    // Track mouse movement
+    document.addEventListener('mousemove', (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+      customCursor.style.left = mouseX + 'px';
+      customCursor.style.top = mouseY + 'px';
+    });
+
+    // Calculate target positions for phrase letters to form phrase centered horizontally and vertically
+    // We'll place phrase on two lines: "RADHIKA" and "MALPANI"
+    const phraseLines = ["RADHIKA", "MALPANI"];
+    const fontSizeSharp = 90; // px for sharp letters
+    const fontSizeBlur = 42; // px for blurred letters
+
+    // Calculate horizontal start positions for each line to center them with EQUAL spacing
+    function getLineStartX(line) {
+      // Use fixed equal spacing between all letters
+      const fixedSpacing = 100; // Fixed spacing in pixels between letter centers
+      const totalWidth = (line.length - 1) * fixedSpacing;
+      return (vw - totalWidth) / 2;
+    }
+    
+    const lineHeight = fontSizeSharp * 1.4;
+    const startY = (vh - (phraseLines.length * lineHeight)) / 2;
+
+    // Create a 2D array to track occupied areas for blurred letters to avoid overlap
+    const occupiedAreas = [];
+
+    // Helper to check if a rectangle overlaps any occupied area
+    function isOverlapping(x, y, w, h) {
+      for (const area of occupiedAreas) {
+        if (
+          x < area.x + area.w + 8 &&
+          x + w + 8 > area.x &&
+          y < area.y + area.h + 8 &&
+          y + h + 8 > area.y
+        ) {
+          return true;
+        }
+      }
+      return false;
+    }
+
+    // Create scattered letters (random letters) first
+    for (let i = 0; i < totalLetters; i++) {
+      const span = document.createElement('span');
+      span.classList.add('letter');
+      span.style.fontSize = fontSizeBlur + 'px';
+      span.textContent = letters.charAt(Math.floor(Math.random() * letters.length));
+
+      // Find a random position that does not overlap existing blurred letters
+      let x, y;
+      const w = fontSizeBlur * 0.65;
+      const h = fontSizeBlur * 1.1;
+      let attempts = 0;
+      do {
+        x = Math.random() * (vw - w);
+        y = Math.random() * (vh - h);
+        attempts++;
+        if (attempts > 300) break; // fallback to avoid infinite loop
+      } while (isOverlapping(x, y, w, h));
+
+      occupiedAreas.push({x, y, w, h});
+      span.style.left = x + 'px';
+      span.style.top = y + 'px';
+      container.appendChild(span);
+      letterElements.push({el: span, isPhrase: false});
+    }
+
+    // Replace some random letters with phrase letters scattered randomly
+    const phraseIndices = [];
+    while (phraseIndices.length < phraseNoSpace.length) {
+      const idx = Math.floor(Math.random() * totalLetters);
+      if (!phraseIndices.includes(idx)) phraseIndices.push(idx);
+    }
+
+    phraseNoSpace.split('').forEach((char, i) => {
+      const idx = phraseIndices[i];
+      const obj = letterElements[idx];
+      obj.el.textContent = char;
+      obj.isPhrase = true;
+      obj.el.style.fontSize = fontSizeSharp + 'px';
+      obj.el.classList.add('sharp-letter');
+      obj.el.style.filter = 'blur(0)';
+      obj.el.style.pointerEvents = 'auto';
+      
+      // Add cursor color change events for name letters
+      obj.el.addEventListener('mouseenter', () => {
+        customCursor.classList.add('on-name');
+        obj.el.style.cursor = 'pointer';
+      });
+      
+      obj.el.addEventListener('mouseleave', () => {
+        customCursor.classList.remove('on-name');
+      });
+    });
+
+    // Calculate target positions for phrase letters with custom spacing for RADHIKA
+    const targets = [];
+    phraseLines.forEach((line, lineIndex) => {
+      const y = startY + lineIndex * lineHeight;
+      
+      if (line === "RADHIKA") {
+        const customSpacing = [0, 100, 100, 100, 100, 70, 100]; // Positions: R-A-D-H-I-K-A
+        let currentX = 0;
+        
+        // Calculate total width with custom spacing to center the line
+        const totalWidth = customSpacing.reduce((sum, spacing, i) => {
+          return i === 0 ? 0 : sum + spacing;
+        }, 0);
+        const startX = (vw - totalWidth) / 2;
+        
+        for (let i = 0; i < line.length; i++) {
+          if (i === 0) {
+            currentX = startX;
+          } else {
+            currentX += customSpacing[i];
+          }
+          targets.push({ x: currentX, y });
+        }
+      } else {
+        // Regular equal spacing for MALPANI
+        const startX = getLineStartX(line);
+        const fixedSpacing = 100;
+        
+        for (let i = 0; i < line.length; i++) {
+          const x = startX + i * fixedSpacing;
+          targets.push({ x, y });
+        }
+      }
+    });
+
+    // Animate letters from scattered to phrase formation
+    function animateIn() {
+      phraseNoSpace.split('').forEach((char, i) => {
+        const obj = letterElements[phraseIndices[i]];
+        const target = targets[i];
+        obj.el.style.transition = 'all 1.5s ease-in-out';
+        obj.el.style.left = target.x + 'px';
+        obj.el.style.top = target.y + 'px';
+        obj.el.style.filter = 'none';
+        obj.el.style.fontSize = fontSizeSharp + 'px';
+        obj.el.classList.add('sharp-letter');
+      });
+    }
+
+    setTimeout(() => {
+      animateIn();
+    }, 1000);
+
+    // Subtle floating animation for phrase letters after they settle
+    phraseNoSpace.split('').forEach((char, i) => {
+      const obj = letterElements[phraseIndices[i]];
+      obj.el.animate([
+        { transform: 'translateY(0px)' },
+        { transform: 'translateY(-6px)' },
+        { transform: 'translateY(0px)' }
+      ], {
+        duration: 3000 + i * 150,
+        iterations: Infinity,
+        direction: 'alternate',
+        easing: 'ease-in-out',
+        delay: 2500
+      });
+    });
+
+    // Redirect on click of phrase letters
+    phraseNoSpace.split('').forEach((char, i) => {
+      const obj = letterElements[phraseIndices[i]];
+      
+      // Add click handler for redirection
+      obj.el.addEventListener('click', () => {
+        window.location.href = 'fairbanks.html';
+      });
+      
+      // Accessibility attributes
+      obj.el.setAttribute('role', 'link');
+      obj.el.setAttribute('tabindex', '0');
+      obj.el.setAttribute('aria-label', `Letter ${char} in RADHIKA MALPANI, click to go to Fairbanks College`);
+      
+      // Add keyboard navigation support
+      obj.el.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          window.location.href = 'fairbanks.html';
+        }
+      });
+    });
+  </script>
+  
+  <div class="nav">
+    <a href="fairbanks.html">RADHIKA MALPANI</a>
+  </div>
 </body>
 </html>

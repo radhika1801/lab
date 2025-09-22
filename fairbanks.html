@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fairbanks - Winter Gallery</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bellefair&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/ScrollTrigger.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Bellefair", serif;
+            font-weight: 400;
+            font-style: normal;
+            user-select: none;
+            cursor: none;
+         /* Hide default cursor */
+            
+        }
+        
+        body {
+            background-color: #000000;
+            color: #fff;
+            overflow-x: hidden;
+        }
+        
+        /* Custom cursor */
+        .cursor {
+            position: fixed;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.74);
+            transform: translate(-50%, -50%);
+            mix-blend-mode: difference;
+            pointer-events: none;
+            transition: width 0.2s, height 0.2s, background-color 0.2s;
+            z-index: 9999;
+        }
+        
+        .cursor.image-hover {
+            width: 60px;
+            height: 60px;
+            background-color: rgba(146, 140, 231, 0.8);
+        }
+        
+     /* Header styles */
+     header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 30px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            background-color: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+        }
+
+        .logo {
+            font-size: 28px;
+            letter-spacing: 2px;
+        }
+
+        .year {
+            font-size: 16px;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+
+        nav li {
+            margin-left: 30px;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: #fff;
+            font-size: 14px;
+            transition: opacity 0.3s;
+        }
+
+        nav a:hover {
+            opacity: 0.7;
+        }
+
+        
+        .gallery-container {
+            width: 100%;
+            padding: 80px 0; /* Reduced padding */
+        }
+        
+        .counter-wrapper {
+            position: fixed;
+            left: 60px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 5;
+            pointer-events: none;
+        }
+        
+        .image-counter {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            font-weight: 200;
+            font-size: 60px;
+            line-height: 1;
+        }
+        
+        .counter-current {
+            font-size: 1em;
+            opacity: 0.9;
+        }
+        
+        .counter-total {
+            font-size: 0.6em;
+            opacity: 0.4;
+            margin-top: 5px;
+        }
+        
+        .image-section {
+            min-height: 90vh; /* Reduced from 100vh */
+            display:block;
+            align-items: center;
+            justify-content: flex-start;
+            position: relative;
+            padding: 5vh 0; /* Reduced vertical padding */
+            padding-left: 25vw;
+            margin-bottom: -5vh; /* Negative margin to bring sections closer */
+        }
+        
+        .image-container {
+            position:fixed;
+            overflow:hidden;
+            cursor: none;
+            border-radius: 4px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* Different sizing for landscape and portrait images */
+        .image-container.landscape {
+            width: 45vw;
+            height: 50vh;
+        }
+        
+        .image-container.portrait {
+            width: 35vw;
+            height: 60vh;
+        }
+        
+        .image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain; /* Use contain to prevent cropping */
+            filter: brightness(0.9);
+            transition: filter 0.3s ease; /* Only transition the brightness */
+            background-color: #000; /* Background color for contain mode */
+        }
+        
+     
+        /* Liquid distortion canvas */
+        .distortion-canvas {
+            position:static;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .image-container:hover .distortion-canvas {
+            opacity: 1;
+        }
+        
+        .side-info {
+            position: fixed;
+            left: 30px;
+            bottom: 30px;
+            font-size: 12px;
+            opacity: 0.7;
+            z-index: 100;
+        }
+        
+        .info-button {
+            position: fixed;
+            right: 300px;
+            top: 30px;
+            font-size: 14px;
+            opacity: 0.7;
+            z-index: 100;
+            cursor: none;
+        }
+        
+        .side-navigation {
+            position: fixed;
+            right: 30px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 50;
+        }
+        
+        .nav-dot {
+            width: 8px;
+            height: 8px;
+            background-color: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            cursor: none;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-dot.active {
+            background-color: rgba(255, 255, 255, 0.8);
+            transform: scale(1.2);
+        }
+        
+        @media (max-width: 768px) {
+            .image-container.landscape {
+                width: 75vw;
+                height: 40vh;
+            }
+            
+            .image-container.portrait {
+                width: 65vw;
+                height: 50vh;
+            }
+            
+            .image-section {
+                padding-left: 10vw;
+            }
+            
+            .counter-wrapper {
+                left: 20px;
+            }
+            
+            .image-counter {
+                font-size: 40px;
+            }
+        }    
+        
+        /* Preloader */
+        .preloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+        
+        .preloader.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+        
+        .loader {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s infinite linear;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="cursor"></div>
+    
+    <div class="preloader">
+        <div class="loader"></div>
+    </div>
+    
+    <div class="progress-bar"></div>
+    
+    <header>
+        <div class="logo">FAIRBANKS, ALASKA</div>
+        <div class="year">2025</div>
+        <nav>
+            <ul>
+                <li><a href="fairbanks.html">FAIRBANKS</a></li>
+                <li><a href="jaipur.html">JAIPUR</a></li>
+                <li><a href="hk.html">HONG KONG</a></li>
+                <li><a href="#" class="menu-icon">•</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="counter-wrapper">
+        <div class="image-counter">
+            <div class="counter-current" id="current-number">01</div>
+            <div class="counter-total">/ 14</div>
+        </div>
+    </div>
+    
+    <div class="side-navigation" id="side-nav"></div>
+    
+    <div class="gallery-container">
+        <section class="image-section" data-index="1">
+            <div class="image-container landscape" id="image-1">
+                <img src="photos/fairbanks/fb1.JPG" alt="Winter Landscape">
+                <canvas class="distortion-canvas"></canvas>
+            </div>
+        </section>
+        
+        <section class="image-section" data-index="2">
+            <div class="image-container landscape" id="image-2">
+                <img src="photos/fairbanks/fb2.JPG" alt="Snow-Covered Trees">
+                <canvas class="distortion-canvas"></canvas>
+            </div>
+        </section>
+        
+        <section class="image-section" data-index="3">
+            <div class="image-container landscape" id="image-3">
+                <img src="photos/fairbanks/fb3.JPG" alt="Northern Horizon">
+                <canvas class="distortion-canvas"></canvas>
+            </div>
+        </section>
+        
+        <section class="image-section" data-index="4">
+            <div class="image-container landscape" id="image-4">
+                <img src="photos/fairbanks/fb4.JPG" alt="Quiet Solitude">
+                <canvas class="distortion-canvas"></canvas>
+            </div>
+        </section>
+        
+        <section class="image-section" data-index="5">
+            <div class="image-container landscape" id="image-5">
+                <img src="photos/fairbanks/fb5.JPG" alt="Frozen Wilderness">
+                <canvas class="distortion-canvas"></canvas>
+            </div>
+        </section>
+        
+        <section class="image-section" data-index="6">
+            <div class="image-container landscape" id="image-6">
+                <img src="photos/fairbanks/fb6.JPG" alt="Winter's Path">
+                <canvas class="distortion-canvas"></canvas>
+            </div>
+        </section>
+        
+        <section class="image-section" data-index="7">
+            <div class="image-container portrait" id="image-7">
+                <img src="photos/fairbanks/fb7.JPG" alt="Morning Frost">
+                <canvas class="distortion-canvas"></canvas>
+            </div>
+        </section>
+        
+        <section class="image-section" data-index="8">
+            <div class="image-container portrait" id="image-8">
+                <img src="photos/fairbanks/fb8.JPG" alt="White Expanse">
+                <canvas class="distortion-canvas"></canvas>
+            </div>
+        </section>
+        
+        <section class="image-section" data-index="9">
+            <div class="image-container portrait" id="image-9">
+                <img src="photos/fairbanks/fb9.JPG" alt="Frozen Moments">
+                <canvas class="distortion-canvas"></canvas>
+            </div>
+        </section>
+        
+        <section class="image-section" data-index="10">
+            <div class="image-container portrait" id="image-10">
+                <img src="photos/fairbanks/fb10.JPG" alt="Snow-Covered Vista">
+                <canvas class="distortion-canvas"></canvas>
+            </div>
+        </section>
+        
+        <section class="image-section" data-index="11">
+            <div class="image-container portrait" id="image-11">
+                <img src="photos/fairbanks/fb11.JPG" alt="Pristine Beauty">
+                <canvas class="distortion-canvas"></canvas>
+            </div>
+        </section>
+        
+        <section class="image-section" data-index="12">
+            <div class="image-container portrait" id="image-12">
+                <img src="photos/fairbanks/fb12.JPG" alt="Glacial Perspectives">
+                <canvas class="distortion-canvas"></canvas>
+            </div>
+        </section>
+        
+        <section class="image-section" data-index="13">
+            <div class="image-container portrait" id="image-13">
+                <img src="photos/fairbanks/fb13.JPG" alt="Winter's Edge">
+                <canvas class="distortion-canvas"></canvas>
+            </div>
+        </section>
+        
+        <section class="image-section" data-index="14">
+            <div class="image-container portrait" id="image-14">
+                <img src="photos/fairbanks/fb14.JPG" alt="Arctic Twilight">
+                <canvas class="distortion-canvas"></canvas>
+            </div>
+        </section>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Custom cursor
+            const cursor = document.querySelector('.cursor');
+            
+            document.addEventListener('mousemove', (e) => {
+                gsap.to(cursor, {
+                    x: e.clientX,
+                    y: e.clientY,
+                    duration: 0.1
+                });
+            });
+            
+            // Change cursor on image hover
+            const imageContainers = document.querySelectorAll('.image-container');
+            
+            imageContainers.forEach(container => {
+                container.addEventListener('mouseenter', () => {
+                    cursor.classList.add('image-hover');
+                });
+                
+                container.addEventListener('mouseleave', () => {
+                    cursor.classList.remove('image-hover');
+                });
+            });
+            
+            // Liquid distortion effect on images
+            imageContainers.forEach(container => {
+                const canvas = container.querySelector('.distortion-canvas');
+                const img = container.querySelector('img');
+                
+                // Setup distortion effect only after image is loaded
+                img.addEventListener('load', () => {
+                    setupDistortionEffect(canvas, img, container);
+                });
+                
+                // If image is already loaded
+                if (img.complete) {
+                    setupDistortionEffect(canvas, img, container);
+                }
+            });
+            
+            function setupDistortionEffect(canvas, img, container) {
+                const ctx = canvas.getContext('2d');
+                
+                // Set canvas size to match container
+                function resizeCanvas() {
+                    const { width, height } = container.getBoundingClientRect();
+                    canvas.width = width;
+                    canvas.height = height;
+                }
+                
+                resizeCanvas();
+                window.addEventListener('resize', resizeCanvas);
+                
+                // Variables for distortion effect
+                let lastX = 0;
+                let lastY = 0;
+                let distortStrength = 0;
+                let isActive = false;
+                
+                container.addEventListener('mousemove', (e) => {
+                    const rect = container.getBoundingClientRect();
+                    const mouseX = e.clientX - rect.left;
+                    const mouseY = e.clientY - rect.top;
+                    
+                    lastX = mouseX;
+                    lastY = mouseY;
+                    distortStrength = 40; // Adjust distortion strength
+                    isActive = true;
+                    
+                    if (!animating) requestAnimationFrame(animate);
+                });
+                
+                container.addEventListener('mouseleave', () => {
+                    isActive = false;
+                });
+                
+                // Distortion animation
+                let animating = false;
+                
+                function animate() {
+                    animating = true;
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    
+                    if (isActive) {
+                        // Draw distorted image
+                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                        
+                        // Apply liquid distortion
+                        const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                        const data = imgData.data;
+                        
+                        for (let y = 0; y < canvas.height; y += 2) {
+                            for (let x = 0; x < canvas.width; x += 2) {
+                                const dx = x - lastX;
+                                const dy = y - lastY;
+                                const distance = Math.sqrt(dx * dx + dy * dy);
+                                
+                                if (distance < distortStrength) {
+                                    const angle = Math.atan2(dy, dx);
+                                    const force = (distortStrength - distance) / distortStrength;
+                                    
+                                    const sourceX = Math.floor(x + force * Math.cos(angle) * 20);
+                                    const sourceY = Math.floor(y + force * Math.sin(angle) * 20);
+                                    
+                                    if (sourceX >= 0 && sourceX < canvas.width && sourceY >= 0 && sourceY < canvas.height) {
+                                        const destIndex = (y * canvas.width + x) * 4;
+                                        const sourceIndex = (sourceY * canvas.width + sourceX) * 4;
+                                        
+                                        data[destIndex] = data[sourceIndex];
+                                        data[destIndex + 1] = data[sourceIndex + 1];
+                                        data[destIndex + 2] = data[sourceIndex + 2];
+                                    }
+                                }
+                            }
+                        }
+                        
+                        ctx.putImageData(imgData, 0, 0);
+                        distortStrength *= 0.95; // Gradually reduce distortion
+                    }
+                    
+                    if (distortStrength > 0.5 || isActive) {
+                        requestAnimationFrame(animate);
+                    } else {
+                        animating = false;
+                    }
+                }
+            }
+            
+            // Preloader
+            const preloader = document.querySelector('.preloader');
+            window.addEventListener('load', () => {
+                setTimeout(() => {
+                    preloader.classList.add('hidden');
+                }, 500);
+            });
+            
+            // Progress bar
+            const progressBar = document.querySelector('.progress-bar');
+            
+            window.addEventListener('scroll', () => {
+                const totalScroll = document.body.scrollHeight - window.innerHeight;
+                const progress = (window.pageYOffset / totalScroll) * 100;
+                progressBar.style.width = `${progress}%`;
+            });
+            
+            // Counter element
+            const counterElement = document.getElementById('current-number');
+            const sections = document.querySelectorAll('.image-section');
+            const sideNav = document.getElementById('side-nav');
+            
+            // Create navigation dots
+            sections.forEach((section, index) => {
+                const dot = document.createElement('div');
+                dot.classList.add('nav-dot');
+                if (index === 0) dot.classList.add('active');
+                
+                dot.addEventListener('click', () => {
+                    section.scrollIntoView({ behavior: 'smooth' });
+                });
+                
+                sideNav.appendChild(dot);
+            });
+            
+            const navDots = document.querySelectorAll('.nav-dot');
+            
+            // Setup IntersectionObserver to track which section is in view
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const index = parseInt(entry.target.dataset.index);
+                        updateCounter(index);
+                        
+                        // Update active nav dot
+                        navDots.forEach((dot, i) => {
+                            if (i === index - 1) {
+                                dot.classList.add('active');
+                            } else {
+                                dot.classList.remove('active');
+                            }
+                        });
+                    }
+                });
+            }, { threshold: 0.5 }); // Trigger when section is 50% visible
+            
+            // Observe all sections
+            sections.forEach(section => {
+                observer.observe(section);
+            });
+            
+            // Update counter with number animation
+            function updateCounter(index) {
+                // Format index to have leading zero
+                const formattedIndex = index.toString().padStart(2, '0');
+                
+                // Animate number change
+                gsap.to(counterElement, {
+                    opacity: 0,
+                    y: -10,
+                    duration: 0.2,
+                    onComplete: () => {
+                        counterElement.textContent = formattedIndex;
+                        gsap.to(counterElement, {
+                            opacity: 1,
+                            y: 0,
+                            duration: 0.2
+                        });
+                    }
+                });
+            }
+            
+            // Create scroll animations for sections
+            gsap.utils.toArray('.image-section').forEach((section, i) => {
+                // Fade in effect
+                gsap.fromTo(section,
+                    { opacity: 0, x: -30 }, // Reduced movement
+                    {
+                        opacity: 1,
+                        x: 0,
+                        duration: 0.8, // Faster animation
+                        scrollTrigger: {
+                            trigger: section,
+                            start: 'top bottom',
+                            end: 'top center',
+                            scrub: 0.5 // Smoother scrub
+                        }
+                    }
+                );
+            });
+            
+            // Keyboard navigation
+            document.addEventListener('keydown', (e) => {
+                // Find current active section index
+                let activeIndex = 0;
+                sections.forEach((section, index) => {
+                    if (navDots[index].classList.contains('active')) {
+                        activeIndex = index;
+                    }
+                });
+                
+                if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+                    // Navigate to next section
+                    if (activeIndex < sections.length - 1) {
+                        sections[activeIndex + 1].scrollIntoView({ behavior: 'smooth' });
+                    }
+                } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+                    // Navigate to previous section
+                    if (activeIndex > 0) {
+                        sections[activeIndex - 1].scrollIntoView({ behavior: 'smooth' });
+                    }
+                }
+            });
+            
+            // Info button interaction
+            const infoButton = document.querySelector('.info-button');
+            infoButton.addEventListener('click', () => {
+                alert('Fairbanks Winter Gallery\n\nPhotos taken in Fairbanks, Alaska during Winter 2025.\nUse arrow keys or navigation dots to navigate between images.\nHover over images to see the liquid distortion effect.');
+            });
+            
+            // Make clickable elements work with custom cursor
+            const clickables = document.querySelectorAll('a, button, .nav-dot, .info-button');
+            
+            clickables.forEach(element => {
+                element.addEventListener('mouseenter', () => {
+                    cursor.classList.add('image-hover');
+                });
+                
+                element.addEventListener('mouseleave', () => {
+                    cursor.classList.remove('image-hover');
+                });
+            });
+        });
+    </script>
+</body>
+</html>
